@@ -1,0 +1,15 @@
+$canvas-color : #000;
+$paddle-color: #fff;
+.board {
+    background: $canvas-color;
+    
+}
+.paddle {
+    background: $paddle-color;
+}
+.ball {
+    background: $paddle-color;
+}
+.score {
+    background: $paddle-color;
+}
