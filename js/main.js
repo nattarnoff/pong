@@ -75,35 +75,48 @@ pong.movePaddle = function(dir, paddle){
 	}
 	ctx.fill();
 }
-pong.moveBall = function(){
+pong.collision = function(x1, y1, w1, h1, x2, y2, w2, h2) {
+    w2 += x2;
+    w1 += x1;
+    if (x2 > w1 || x1 > w2) return false;
+    h2 += y2;
+    h1 += y1;
+    if (y2 > h1 || y1 > h2) return false;
+  return true;
+}
+pong.moveRight = function(){
+	if(pong.collision(ball.x, ball.y, ball.w, ball.h, rightPaddle.x, rightPaddle.y, rightPaddle.w, rightPaddle.h)){
+	 	pong.throwBall('l');
 
-	ctx.clearRect(ball.x, ball.y, ball.w, ball.h);
- ball.x = ball.x-speed/2;
- if(ball.x > w){
- 	pong.updateScore('right');
- 	ball.x = w/2 - ball.w/2;
- }
- if(ball.x < 0) {
- 	pong.updateScore('left');
- 	ball.x = w/2 - ball.w/2;
- }
- // console.log(ball.x+" "+(leftPaddle.x+leftPaddle.w))
- if(ball.x <= leftPaddle.x+leftPaddle.w-1){
- 	// console.log('Crash!'+(leftPaddle.x+leftPaddle.w));
- 	ball.x = ball.x+speed/2;
+	 }
+		ctx.clearRect(ball.x, ball.y, ball.w, ball.h);
+	 ball.x = ball.x+speed/10;
+	 if(ball.x > w){
+	 	pong.updateScore('right');
+	 	pong.startGame();
+	 }
+	 ctx.beginPath();
+		ctx.rect(ball.x, ball.y, ball.w, ball.h);
+		ctx.fillStyle = ball.fill;
+		ctx.fill();
+}
 
- }
-	// ball.y = ball.y-speed/2;
-	// if(ball.y < 0){
-	// 	ball.y = ball.y+speed/2;
-	// } else if (ball.y == h-ball.h){
-	// 	ball.y = ball.y-speed/2;
-	// }
-	// console.log(ball.y);
-	ctx.beginPath();
-	ctx.rect(ball.x, ball.y, ball.w, ball.h);
-	ctx.fillStyle = ball.fill;
-	ctx.fill();
+pong.moveLeft = function(){
+	if(pong.collision(ball.x, ball.y, ball.w, ball.h, leftPaddle.x, leftPaddle.y, leftPaddle.w, leftPaddle.h)){
+		 	pong.throwBall("r");
+
+		 }
+			
+		ctx.clearRect(ball.x, ball.y, ball.w, ball.h);
+	 ball.x = ball.x-speed/10;
+	 if(ball.x < 0) {
+	 	pong.updateScore('left');
+	 	pong.startGame();
+	 }
+	 ctx.beginPath();
+		ctx.rect(ball.x, ball.y, ball.w, ball.h);
+		ctx.fillStyle = ball.fill;
+		ctx.fill();
 }
 pong.ai = function(){
 	if(ball.y > leftPaddle.y){
@@ -123,10 +136,26 @@ pong.updateScore = function(side){
 	}
 	
 }
+pong.throwBall= function(dir){
+	if(dir=='r') {
+		pong.moveRight();
+	} else {
+		pong.moveLeft();
+	}
+}
+pong.startGame =function(){
+		var start = Math.floor((Math.random()*2));
+		console.log(start);
+		if(start == 0){
+		setInterval('pong.throwBall("l")', 5);
+	} else {
+		setInterval('pong.throwBall("r")', 5);
+	}
+}
 $(function(){
 	pong.setBoard();
-	// setInterval('pong.ai()', 75);
-	setInterval('pong.moveBall()', 50);
+	pong.startGame();
+	
 	$(document).keypress(function(e){
 		if(e.which === 107){
 			console.log("right up");
