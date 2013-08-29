@@ -11,5 +11,15 @@ $paddle-color: #fff;
     background: $paddle-color;
 }
 .score {
-    background: $paddle-color;
+    color: $paddle-color;
+    position: absolute;
+    top: 26px;
+    left: 0;
+    width: 400px;
+    overflow:hidden;
+    div {
+      width: 50%;
+      float:left;
+      text-align: center;
+    }
 }
