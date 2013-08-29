@@ -6,7 +6,7 @@ var ballHW = 10;
 var $b = $('#board');
 var w = $b.width();
 var h = $b.height();
-var speed = 12;
+var speed = 10;
 var leftPaddle = $.extend({},block);
 leftPaddle.w = paddleWidth;
 leftPaddle.h = paddleHeight;
@@ -21,9 +21,10 @@ ball.h = ballHW;
 ball.w = ballHW;
 ball.x = w/2-ballHW/2;
 ball.y = h/2-ballHW/2;
+var canvas = document.getElementById('board');
+var ctx = canvas.getContext('2d');
  pong.setBoard = function(){
-	var canvas = document.getElementById('board');
-	var ctx = canvas.getContext('2d');
+	
 	ctx.beginPath();
 	ctx.rect(rightPaddle.x, rightPaddle.y, rightPaddle.w, rightPaddle.h);
 	ctx.fillStyle = rightPaddle.fill;
@@ -40,14 +41,24 @@ ball.y = h/2-ballHW/2;
 	ctx.fill();
 }
 pong.movePaddle = function(dir, paddle){
-	var canvas = document.getElementById('board');
-	var ctx = canvas.getContext('2d');
 	if(paddle === 'right'){
+		if(dir === 'up' && rightPaddle.y-speed<=0){
+			return false;
+		} else if(dir =='down' && rightPaddle.y+speed >= h-rightPaddle.h){
+			return false;
+		}
 		ctx.clearRect(rightPaddle.x, rightPaddle.y, rightPaddle.w, rightPaddle.h);
+		
 		rightPaddle.y = (dir=='up') ? rightPaddle.y-speed : rightPaddle.y+speed;
+		
 		ctx.beginPath();
 		ctx.rect(rightPaddle.x, rightPaddle.y, rightPaddle.w, rightPaddle.h);
 	} else {
+		if(dir === 'up' && leftPaddle.y-speed<=0){
+			return false;
+		} else if(dir =='down' && leftPaddle.y+speed >= h-leftPaddle.h){
+			return false;
+		}
 		ctx.clearRect(leftPaddle.x, leftPaddle.y, leftPaddle.w, leftPaddle.h);
 		leftPaddle.y = (dir=='up') ? leftPaddle.y-speed : leftPaddle.y+speed;
 		ctx.beginPath();
@@ -55,8 +66,33 @@ pong.movePaddle = function(dir, paddle){
 	}
 	ctx.fill();
 }
+pong.moveBall = function(){
+
+	ctx.clearRect(ball.x, ball.y, ball.w, ball.h);
+	// ball.x = ball.x+speed/2;
+	ball.y = ball.y-speed/2;
+	if(ball.y < 0){
+		ball.y = ball.y+speed/2;
+	} else if (ball.y == h-ball.h){
+		ball.y = ball.y-speed/2;
+	}
+	console.log(ball.y);
+	ctx.beginPath();
+	ctx.rect(ball.x, ball.y, ball.w, ball.h);
+	ctx.fillStyle = ball.fill;
+	ctx.fill();
+}
+pong.ai = function(){
+	if(ball.y > leftPaddle.y){
+		pong.movePaddle('down', 'left');
+	} else {
+		pong.movePaddle('up', 'left');
+	}
+}
 $(function(){
 	pong.setBoard();
+	setInterval('pong.ai()', 75);
+	setInterval('pong.moveBall()', 50);
 	$(document).keypress(function(e){
 		if(e.which === 107){
 			console.log("right up");
