@@ -87,6 +87,12 @@ pong.moveBall = function(){
  	pong.updateScore('left');
  	ball.x = w/2 - ball.w/2;
  }
+ // console.log(ball.x+" "+(leftPaddle.x+leftPaddle.w))
+ if(ball.x <= leftPaddle.x+leftPaddle.w-1){
+ 	// console.log('Crash!'+(leftPaddle.x+leftPaddle.w));
+ 	ball.x = ball.x+speed/2;
+
+ }
 	// ball.y = ball.y-speed/2;
 	// if(ball.y < 0){
 	// 	ball.y = ball.y+speed/2;
